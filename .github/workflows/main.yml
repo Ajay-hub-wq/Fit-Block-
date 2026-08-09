@@ -1,0 +1,51 @@
+name: Build FIT BLOCK APK/AAB
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Find Project Root (auto-detect)
+        run: |
+          GRADLEW_PATH=$(find . -name "gradlew" -type f | head -n 1)
+          PROJECT_DIR=$(dirname "$GRADLEW_PATH")
+          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Make gradlew executable
+        run: chmod +x ${{ env.PROJECT_DIR }}/gradlew
+
+      - name: Build Debug APK
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Build Release
+        working-directory: ${{ env.PROJECT_DIR }}
+        run: ./gradlew assembleRelease bundleRelease --stacktrace
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: FitBlock-Debug-APK
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk
+
+      - name: Upload AAB
+        uses: actions/upload-artifact@v4
+        with:
+          name: FitBlock-Release-AAB
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/bundle/release/*.aab
