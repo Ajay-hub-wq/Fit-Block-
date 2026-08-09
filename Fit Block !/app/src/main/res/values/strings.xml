@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FIT BLOCK</string>
+    <string name="play">PLAY</string>
+    <string name="best">BEST</string>
+    <string name="score">SCORE</string>
+    <string name="game_over">GAME OVER</string>
+    <string name="new_best">NEW BEST!</string>
+    <string name="retry">RETRY</string>
+    <string name="home">HOME</string>
+    <string name="paused">PAUSED</string>
+    <string name="resume">RESUME</string>
+    <string name="daily_reward">DAILY REWARD</string>
+    <string name="settings">SETTINGS</string>
+</resources>

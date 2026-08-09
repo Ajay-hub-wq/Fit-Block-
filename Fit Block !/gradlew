@@ -1,0 +1,11 @@
+#!/bin/sh
+# FitBlock Auto Wrapper - works from any subfolder
+# This will find gradle and run it
+set -e
+PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [ -f "$PROJECT_DIR/gradle/wrapper/gradle-wrapper.jar" ]; then
+  exec java -jar "$PROJECT_DIR/gradle/wrapper/gradle-wrapper.jar" "$@"
+else
+  # fallback to system gradle
+  exec gradle "$@"
+fi

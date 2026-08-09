@@ -1,0 +1,36 @@
+
+HOW TO BUILD LOCALLY:
+
+1. Open Android Studio Hedgehog or newer
+2. Open folder FitBlock-Android
+3. Let Gradle sync (will download dependencies)
+4. Run on device/emulator
+
+HOW TO BUILD VIA GITHUB:
+
+1. Zip entire FitBlock-Android folder contents (not the folder itself, but its contents) OR push folder as repo root
+2. Create new GitHub repo
+3. Push:
+   git init
+   git add .
+   git commit -m "FitBlock"
+   git branch -M main
+   git remote add origin https://github.com/YOU/fitblock.git
+   git push -u origin main
+
+4. Wait 3-5 min, go to Actions tab, download APK from Artifacts
+
+For signed release, add secrets as described in CREDENTIALS_NEEDED.md and push again.
+
+For Indus Appstore:
+- Use app/build/outputs/bundle/release/app-release.aab (signed if secrets present, else unsigned for testing)
+
+For Play Store:
+- Need signed AAB + privacy policy URL + screenshots
+
+PACKAGE NAME:
+Current is com.fitblock.game - you can change in app/build.gradle.kts before first push.
+
+ADMOB:
+Test ads will show by default. Replace with real IDs before publishing.
+
