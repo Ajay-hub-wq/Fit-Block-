@@ -1,29 +1,31 @@
-package com.fitblock.game.pieces
 
-import com.fitblock.game.core.CellOffset
+package com.fitblock.game.pieces
 import com.fitblock.game.core.PieceDefinition
+import com.fitblock.game.core.Point
 import kotlin.random.Random
 
 object PieceProvider {
-    private val pieces = listOf(
-        PieceDefinition(1, listOf(CellOffset(0,0)), 1, 1, 0),
-        PieceDefinition(2, listOf(CellOffset(0,0), CellOffset(1,0)), 2, 1, 1),
-        PieceDefinition(3, listOf(CellOffset(0,0), CellOffset(0,1), CellOffset(1,0), CellOffset(1,1)), 2, 2, 2),
-        PieceDefinition(4, listOf(CellOffset(0,0), CellOffset(1,0), CellOffset(2,0)), 3, 1, 3),
-        PieceDefinition(5, listOf(CellOffset(0,0), CellOffset(0,1), CellOffset(0,2)), 1, 3, 4),
-        PieceDefinition(6, listOf(CellOffset(0,0), CellOffset(1,0), CellOffset(2,0), CellOffset(2,1)), 3, 2, 5)
+    private val all = listOf(
+        listOf(Point(0,0)),
+        listOf(Point(0,0), Point(1,0)),
+        listOf(Point(0,0), Point(0,1)),
+        listOf(Point(0,0), Point(1,0), Point(0,1)),
+        listOf(Point(0,0), Point(1,0), Point(2,0)),
+        listOf(Point(0,0), Point(0,1), Point(0,2)),
+        listOf(Point(0,0), Point(1,0), Point(1,1)),
+        listOf(Point(0,0), Point(0,1), Point(1,1)),
+        listOf(Point(0,0), Point(1,0), Point(2,0), Point(0,1)),
+        listOf(Point(0,0), Point(1,0), Point(2,0), Point(2,1)),
+        listOf(Point(0,0), Point(1,0), Point(0,1), Point(1,1)),
+        listOf(Point(0,0), Point(1,0), Point(2,0), Point(1,1)),
+        listOf(Point(1,0), Point(0,1), Point(1,1), Point(2,1)),
+        listOf(Point(0,0), Point(1,0), Point(2,0), Point(3,0)),
+        listOf(Point(0,0), Point(0,1), Point(0,2), Point(0,3))
     )
-
-    fun getRandomPiece(random: Random = Random.Default): PieceDefinition {
-        return pieces.random(random)
-    }
-
-    fun getThreePieces(random: Random = Random.Default): List<PieceDefinition> {
-        return List(3) { getRandomPiece(random) }
-    }
-
-    // FIXED: occupiedCount ki jagah cellCount use kiya
-    fun getHeaviestPiece(): PieceDefinition {
-        return pieces.maxByOrNull { it.cellCount }?: pieces[0]
+    fun getThreePieces(): List<PieceDefinition> {
+        return List(3) { i ->
+            val shape = all.random()
+            PieceDefinition(id = Random.nextInt(10000), cells = shape, colorIndex = Random.nextInt(8))
+        }
     }
 }

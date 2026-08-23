@@ -1,3 +1,4 @@
+
 package com.fitblock.game.ui
 
 import android.app.Application
@@ -9,9 +10,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.fitblock.game.board.BoardData
+import com.fitblock.game.board.BoardCell
 import com.fitblock.game.board.PlacementValidator
 import com.fitblock.game.core.*
 import com.fitblock.game.data.SaveManager
+import com.fitblock.game.data.SaveData
 import com.fitblock.game.data.SoundManager
 import com.fitblock.game.ui.theme.FitBlockColors
 import kotlinx.coroutines.delay
@@ -32,7 +35,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     var maxCombo by mutableStateOf(0)
     var showNewBest by mutableStateOf(false)
 
-    // DRAG STATE - Needed for new GameScreens
+    // DRAG STATE - THIS FIXES YOUR ERROR
     var draggingIndex by mutableStateOf<Int?>(null)
     var draggedPiece by mutableStateOf<PieceDefinition?>(null)
     var dragOffset by mutableStateOf(Offset.Zero)
@@ -73,16 +76,16 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     fun pause() { gameState = GameState.Paused }
     fun resume() { gameState = GameState.Playing }
     fun goToMenu() { saveProgress(); gameState = GameState.MainMenu }
-    fun toggleMusic() { musicEnabled =!musicEnabled; saveProgress() }
-    fun toggleSfx() { sfxEnabled =!sfxEnabled; saveProgress() }
-    fun toggleVibration() { vibrationEnabled =!vibrationEnabled; saveProgress() }
+    fun toggleMusic() { musicEnabled = !musicEnabled; saveProgress() }
+    fun toggleSfx() { sfxEnabled = !sfxEnabled; saveProgress() }
+    fun toggleVibration() { vibrationEnabled = !vibrationEnabled; saveProgress() }
 
     fun startDrag(index: Int, offset: Offset) {
         draggingIndex = index
         draggedPiece = tray.getOrNull(index)
         dragOffset = offset
         gameState = GameState.Dragging
-        soundManager.playClick(sfxEnabled && vibrationEnabled)
+        soundManager.playClick(sfxEnabled)
     }
 
     fun updateDrag(offset: Offset, boardPos: Pair<Int,Int>?) {
@@ -107,7 +110,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun quickPlace(index: Int) {
-        val piece = tray.getOrNull(index)?: return
+        val piece = tray.getOrNull(index) ?: return
         for(y in 0 until BoardData.SIZE) {
             for(x in 0 until BoardData.SIZE) {
                 if(PlacementValidator.canPlace(board, piece, x, y)) {

@@ -1,3 +1,4 @@
+
 package com.fitblock.game.ui.theme
 
 import androidx.compose.material3.*
@@ -12,8 +13,5 @@ private val DarkColorScheme = darkColorScheme(
 
 @Composable
 fun FitBlockTheme(content: @Composable () -> Unit) {
-    MaterialTheme(
-        colorScheme = DarkColorScheme,
-        content = content
-    )
+    MaterialTheme(colorScheme = DarkColorScheme, content = content)
 }

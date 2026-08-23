@@ -1,3 +1,4 @@
+
 package com.fitblock.game.ui.screens
 
 import androidx.compose.animation.core.*
@@ -50,7 +51,7 @@ fun FitBlockGameRoot(viewModel: GameViewModel) {
 
 @Composable
 fun FloatingPiece(vm: GameViewModel) {
-    val piece = vm.draggedPiece?: return
+    val piece = vm.draggedPiece ?: return
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
         Box(
             Modifier
@@ -186,7 +187,7 @@ fun BoardViewWithPreview(vm: GameViewModel, boardBounds: Rect, cellSize: Float) 
 
                     val bg = when {
                         isPreview && isValid -> FitBlockColors.BoardCellHighlightValid
-                        isPreview &&!isValid -> FitBlockColors.BoardCellHighlightInvalid
+                        isPreview && !isValid -> FitBlockColors.BoardCellHighlightInvalid
                         isClearing -> Color.White
                         cell.occupied -> cell.color
                         else -> FitBlockColors.BoardCellEmpty
@@ -248,6 +249,7 @@ fun MainMenuScreen(vm: GameViewModel) {
         }
         Spacer(Modifier.height(20.dp))
     }
+    if(vm.showSettings) SettingsDialog(vm)
 }
 
 @Composable
