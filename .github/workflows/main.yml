@@ -12,11 +12,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Find Project Root (auto-detect)
+      - name: Find project root
         run: |
-          GRADLEW_PATH=$(find . -name "gradlew" -type f | head -n 1)
-          PROJECT_DIR=$(dirname "$GRADLEW_PATH")
-          echo "PROJECT_DIR=$PROJECT_DIR" >> $GITHUB_ENV
+          ROOT=$(find . -name "settings.gradle.kts" -type f -print | head -n 1 | xargs dirname)
+          if [ -z "$ROOT" ]; then ROOT="."; fi
+          echo "PROJECT_DIR=$ROOT" >> $GITHUB_ENV
+          echo "Project found at: $ROOT"
+          ls -la "$ROOT"
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -27,25 +29,35 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.2
+          cache-disabled: true
+
       - name: Make gradlew executable
-        run: chmod +x ${{ env.PROJECT_DIR }}/gradlew
+        run: chmod +x "${{ env.PROJECT_DIR }}/gradlew"
 
       - name: Build Debug APK
-        working-directory: ${{ env.PROJECT_DIR }}
+        working-directory: "${{ env.PROJECT_DIR }}"
         run: ./gradlew assembleDebug --stacktrace
 
-      - name: Build Release
-        working-directory: ${{ env.PROJECT_DIR }}
+      - name: Build Release Bundle
+        working-directory: "${{ env.PROJECT_DIR }}"
         run: ./gradlew assembleRelease bundleRelease --stacktrace
 
-      - name: Upload APK
+      - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
           name: FitBlock-Debug-APK
-          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk
+          path: |
+            ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk
+            **/app/build/outputs/apk/debug/*.apk
 
-      - name: Upload AAB
+      - name: Upload Release AAB
         uses: actions/upload-artifact@v4
         with:
           name: FitBlock-Release-AAB
-          path: ${{ env.PROJECT_DIR }}/app/build/outputs/bundle/release/*.aab
+          path: |
+            ${{ env.PROJECT_DIR }}/app/build/outputs/bundle/release/*.aab
+            **/app/build/outputs/bundle/release/*.aab
