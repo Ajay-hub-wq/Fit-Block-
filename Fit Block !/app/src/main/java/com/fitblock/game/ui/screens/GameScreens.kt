@@ -160,7 +160,7 @@ fun BoardViewWithPreview(vm: GameViewModel, boardBounds: Rect, cellSize: Float) 
                     val isValid = vm.isValidPreview
                     val isPlacedAnim = vm.lastPlacedCells.contains(x to y)
                     val isClearing = vm.lastCleared?.cellsToClear?.contains(x to y) == true
-                    val scale by animateFloatAsState(if(isPlacedAnim) 1.2f else if(isClearing) 0f else 1f, tween(150), label="cell_$x$y")
+                    val scale by animateFloatAsState(targetValue = if(isPlacedAnim) 1.2f else if(isClearing) 0f else 1f, animationSpec = tween(150), label="cell_$x$y")
 
                     val bg = when {
                         isPreview && isValid -> FitBlockColors.BoardCellHighlightValid
@@ -231,7 +231,7 @@ fun SettingsDialog(vm: GameViewModel) {
 @Composable
 fun ResultScreen(vm: GameViewModel) {
     Box(Modifier.fillMaxSize().background(Color.Black.copy(alpha=0.7f)), contentAlignment=Alignment.Center) {
-        val scale by animateFloatAsState(0f, 1f, animationSpec=spring(dampingRatio=0.6f, stiffness=300f), label="result")
+        val scale by animateFloatAsState(targetValue = 1f, animationSpec=spring(dampingRatio=0.6f, stiffness=300f), label="result")
         Column(Modifier.scale(scale).background(FitBlockColors.BoardSurface, RoundedCornerShape(28.dp)).padding(28.dp).fillMaxWidth(0.85f), horizontalAlignment=Alignment.CenterHorizontally, verticalArrangement=Arrangement.spacedBy(16.dp)) {
             Text("GAME OVER", color=Color.White, fontSize=28.sp, fontWeight=FontWeight.Black)
             Text("${vm.score}", color=Color.White, fontSize=52.sp, fontWeight=FontWeight.Black)
