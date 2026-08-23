@@ -6,18 +6,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Folder ka naam yahan direct likh diya, ab find ki zarurat nahi
+    env:
+      PROJECT_DIR: "Fit Block !"
     steps:
       - uses: actions/checkout@v4
-
-      - name: Find project root
-        id: find
-        run: |
-          set +H
-          ROOT=$(find . -name "settings.gradle.kts" -type f | head -n 1 | xargs dirname)
-          if [ -z "$ROOT" ]; then ROOT="."; fi
-          echo "PROJECT_DIR=$ROOT" >> $GITHUB_ENV
-          echo "PROJECT at $ROOT"
-          ls -la "$ROOT"
 
       - uses: actions/setup-java@v4
         with:
@@ -31,26 +24,25 @@ jobs:
           gradle-version: 8.2
           cache-disabled: true
 
-      - name: Build Debug APK (No gradlew needed)
+      - name: List files
+        run: ls -la "${{ env.PROJECT_DIR }}"
+
+      - name: Build Debug APK
         working-directory: "${{ env.PROJECT_DIR }}"
-        run: |
-          set +H
-          gradle assembleDebug --stacktrace
+        run: gradle assembleDebug --stacktrace
 
       - name: Build Release AAB
         working-directory: "${{ env.PROJECT_DIR }}"
-        run: |
-          set +H
-          gradle bundleRelease assembleRelease --stacktrace
+        run: gradle bundleRelease assembleRelease --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: FitBlock-Debug-APK
-          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk
+          path: "${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk"
 
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: FitBlock-Release-AAB
-          path: ${{ env.PROJECT_DIR }}/app/build/outputs/bundle/release/*.aab
+          path: "${{ env.PROJECT_DIR }}/app/build/outputs/bundle/release/*.aab"
