@@ -1,63 +1,56 @@
 name: Build FIT BLOCK APK/AAB
-
 on:
   push:
     branches: [ main, master ]
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Find project root
+        id: find
         run: |
-          ROOT=$(find . -name "settings.gradle.kts" -type f -print | head -n 1 | xargs dirname)
+          set +H
+          ROOT=$(find . -name "settings.gradle.kts" -type f | head -n 1 | xargs dirname)
           if [ -z "$ROOT" ]; then ROOT="."; fi
           echo "PROJECT_DIR=$ROOT" >> $GITHUB_ENV
-          echo "Project found at: $ROOT"
+          echo "PROJECT at $ROOT"
           ls -la "$ROOT"
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - uses: android-actions/setup-android@v3
 
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 8.2
           cache-disabled: true
 
-      - name: Make gradlew executable
-        run: chmod +x "${{ env.PROJECT_DIR }}/gradlew"
-
-      - name: Build Debug APK
+      - name: Build Debug APK (No gradlew needed)
         working-directory: "${{ env.PROJECT_DIR }}"
-        run: ./gradlew assembleDebug --stacktrace
+        run: |
+          set +H
+          gradle assembleDebug --stacktrace
 
-      - name: Build Release Bundle
+      - name: Build Release AAB
         working-directory: "${{ env.PROJECT_DIR }}"
-        run: ./gradlew assembleRelease bundleRelease --stacktrace
+        run: |
+          set +H
+          gradle bundleRelease assembleRelease --stacktrace
 
-      - name: Upload Debug APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: FitBlock-Debug-APK
-          path: |
-            ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk
-            **/app/build/outputs/apk/debug/*.apk
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/apk/debug/*.apk
 
-      - name: Upload Release AAB
+      - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
           name: FitBlock-Release-AAB
-          path: |
-            ${{ env.PROJECT_DIR }}/app/build/outputs/bundle/release/*.aab
-            **/app/build/outputs/bundle/release/*.aab
+          path: ${{ env.PROJECT_DIR }}/app/build/outputs/bundle/release/*.aab
